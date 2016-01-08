@@ -43,12 +43,12 @@ public class Webapp {
       });
       
       // Create IP messaging grant
-      final IpMessagingGrant grant = new IpMessagingGrant();
+      IpMessagingGrant grant = new IpMessagingGrant();
       grant.setEndpointId(endpointId);
       grant.setServiceSid(env.get("TWILIO_IPM_SERVICE_SID"));
 
       // Create access token
-      final AccessToken token = new AccessToken.Builder(
+      AccessToken token = new AccessToken.Builder(
         env.get("TWILIO_ACCOUNT_SID"),
         env.get("TWILIO_API_KEY"),
         env.get("TWILIO_API_SECRET")
