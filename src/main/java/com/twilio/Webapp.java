@@ -3,7 +3,11 @@ package com.twilio;
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
@@ -28,16 +32,26 @@ public class Webapp {
       String appName = "TwilioChatDemo";
       String endpointId = appName + ":" + identity + ":" + request.params("device");
       
+      // Fetch environment info
+      Map<String, String> env = new HashMap<String, String>();
+      Path path = Paths.get(".env");
+      Files.lines(path).forEach(s -> {
+          String[] keyVal = s.split("=");
+          String key = keyVal[0];
+          String val = keyVal[1];
+          env.put(key, val);
+      });
+      
       // Create IP messaging grant
       IpMessagingGrant grant = new IpMessagingGrant();
       grant.setEndpointId(endpointId);
-      grant.setServiceSid(System.getenv("TWILIO_IPM_SERVICE_SID"));
-      
+      grant.setServiceSid(env.get("TWILIO_IPM_SERVICE_SID"));
+
       // Create access token
       AccessToken token = new AccessToken.Builder(
-        System.getenv("TWILIO_ACCOUNT_SID"),
-        System.getenv("TWILIO_API_KEY"),
-        System.getenv("TWILIO_API_SECRET")
+        env.get("TWILIO_ACCOUNT_SID"),
+        env.get("TWILIO_API_KEY"),
+        env.get("TWILIO_API_SECRET")
       ).identity(identity).grant(grant).build();
       
       // create JSON response payload 
